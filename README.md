@@ -46,5 +46,5 @@ python manage.py makemigrations
 
 python manage.py migrate
 
-
+* Добавляем в корень проекта файл medis  и настройки для него в settings.py
 
