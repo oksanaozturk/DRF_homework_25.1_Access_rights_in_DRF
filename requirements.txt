@@ -1,0 +1,10 @@
+Django==5.0.4
+# Для отображения картинок
+pillow==10.3.0
+# Для работы с БД
+psycopg2-binary==2.9.9
+
+djangorestframework==3.15.1
+
+# Для работы файла .env
+python-dotenv==1.0.1
