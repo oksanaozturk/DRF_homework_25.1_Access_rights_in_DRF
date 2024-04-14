@@ -48,3 +48,22 @@ python manage.py migrate
 
 * Добавляем в корень проекта файл medis  и настройки для него в settings.py
 
+* Создаем приложение materials
+
+python manage.py startapp materials
+
+* Создание в приложении materials моделей Курс и Урок + миграции + регистрация их в Админке
+
+* Для реализации CRUD для модели Курса используем Viewsets
+ 
+Внесены изменения 1) в views.py - CourseViewSet, 
+                  2) создан файл materials/serializer.py и в нем CourseSerializer
+                  3) создан файл materials/urls.py, в нем создан router (маршрутизатор для CRUD при использовании способа ViewSet)
+                  4) Добавлены настройки в config/urls.py
+
+* Для реализации CRUD для модели урока - использованы Generic-классы
+
+Внесены изменения 1) в views.py - LessonCreateAPIView, LessonDestroyAPIView, LessonUpdateAPIView,
+                             LessonRetrieveAPIView, LessonListAPIView
+                  2) в файл materials/serializer.py и в нем LessonSerializer
+                  3) в файле materials/urls.py добавлены пути для каждого дейставия из механизмов CRUD
