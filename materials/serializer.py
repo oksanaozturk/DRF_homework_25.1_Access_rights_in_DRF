@@ -30,11 +30,23 @@ class CourseDetailSerializer(ModelSerializer):
 
     # Излишним указывать `source='lessons'` в поле ListSerializer в сериализаторе CourseSerializer,
     # поскольку оно совпадает с именем поля.
+    # При использовании сериализатора для связанной модели LessonSerializer
+    # read_only=True означает, что открыт только для чтения, write_only=True - можно будет записывать,
+    # но откроются все поля для заполнения
     lessons = LessonSerializer(many=True, read_only=True)
+
+    # Вариант выведения lessons с использованием SerializerMethodField()
+    # lessons = SerializerMethodField()
+    #
+    # def get_lessons(self, course):
+    #     """Метод для получения списка назвпний уроков"""
+    #     lessons = [lesson.name for lesson in Lesson.objects.filter(course=course)]
+    #
+    #     return lessons
 
     class Meta:
         model = Course
-        fields = ("id", "name", "description", "preview", "lessons", "count_lessons_for_course")
+        fields = "__all__"
 
     @staticmethod
     def get_count_lessons_for_course(course):
