@@ -155,3 +155,8 @@ AUTH_USER_MODEL = "users.User"
 # Необходимо создать папку 'media' в корне проекта
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# Настройки для фильтрации модуля django-filter
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
