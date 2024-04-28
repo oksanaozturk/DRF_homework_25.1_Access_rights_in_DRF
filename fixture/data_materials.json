@@ -1,0 +1,126 @@
+[
+  {
+    "model": "materials.course",
+    "pk": 1,
+    "fields": {
+      "name": "Подготовка в школе",
+      "preview": "",
+      "description": "Подготовка в школе для дошкольников"
+    }
+  },
+  {
+    "model": "materials.course",
+    "pk": 2,
+    "fields": {
+      "name": "Художественое творчество",
+      "preview": "",
+      "description": "Различные виды Художественого творчества"
+    }
+  },
+  {
+    "model": "materials.course",
+    "pk": 4,
+    "fields": {
+      "name": "Общее развитие детей дошкольного возраста",
+      "preview": "",
+      "description": "Общее развитие детей дошкольного возраста, 4-6 лет"
+    }
+  },
+  {
+    "model": "materials.course",
+    "pk": 6,
+    "fields": {
+      "name": "Пение",
+      "preview": "course_foto/scale_1200.jpg",
+      "description": "Уроки пения"
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 1,
+    "fields": {
+      "course": 1,
+      "name": "Математика",
+      "preview": "",
+      "description": "Математика для подготовки в школу",
+      "video": ""
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 3,
+    "fields": {
+      "course": 2,
+      "name": "Лепка",
+      "preview": "",
+      "description": "Творческая лепка из глины разных сортов",
+      "video": ""
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 4,
+    "fields": {
+      "course": 2,
+      "name": "Рисование",
+      "preview": "",
+      "description": "Рисование краскими и карандашами",
+      "video": ""
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 5,
+    "fields": {
+      "course": 1,
+      "name": "Чтение",
+      "preview": "",
+      "description": "Чтение для дошкольников",
+      "video": ""
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 7,
+    "fields": {
+      "course": 4,
+      "name": "Гимнастика",
+      "preview": "",
+      "description": "",
+      "video": ""
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 8,
+    "fields": {
+      "course": 4,
+      "name": "Музыка",
+      "preview": "",
+      "description": "Музыкальные занятия с детьми",
+      "video": ""
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 9,
+    "fields": {
+      "course": 6,
+      "name": "Хор",
+      "preview": "lesson_foto/1675286391_gas-kvas-com-p-test-art-risunki-34.png",
+      "description": "Хоровое пение",
+      "video": ""
+    }
+  },
+  {
+    "model": "materials.lesson",
+    "pk": 10,
+    "fields": {
+      "course": 6,
+      "name": "Сольфеджио",
+      "preview": "lesson_foto/hqdefault.jpg",
+      "description": "Уроки по Сольфеджио",
+      "video": ""
+    }
+  }
+]
