@@ -2,6 +2,8 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
 
+from materials.models import Course, Lesson
+
 NULLABLE = {"blank": True, "null": True}
 
 
@@ -43,3 +45,24 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+class Payment(models.Model):
+    """Класс для создания модели платежа"""
+
+    CHOICES_PAYMENT_METHOD = [
+        ("cash", "наличные"),
+        ("transfer to account", "перевод на счет"),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name="payments", verbose_name="Пользователь",
+                             null=True, blank=True)
+    date_payment = models.DateField(auto_now=True, verbose_name="Дата платежа")
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, related_name="payments",
+                               verbose_name="Оплаченный курс", null=True, blank=True)
+    lesson = models.ForeignKey(Lesson, on_delete=models.SET_NULL, related_name="payments",
+                               verbose_name="Оплаченный урок", null=True, blank=True)
+    amount = models.PositiveIntegerField(verbose_name="Сумма оплаты")
+    payment_method = models.CharField(max_length=50, choices=CHOICES_PAYMENT_METHOD, verbose_name="Способ оплаты",
+                                      null=True, blank=True)
+
