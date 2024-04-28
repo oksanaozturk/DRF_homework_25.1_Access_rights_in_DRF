@@ -6,7 +6,8 @@ from materials.serializer import CourseSerializer, LessonSerializer, CourseDetai
 
 
 class CourseViewSet(ModelViewSet):
-    """Класс для настройки CRUD для модели Course с помощью метеда ViewSet"""
+    """Класс для настройки CRUD для модели Course с помощью метеда ViewSet
+    Create, Update, Retrieve, Delete."""
     serializer_class = CourseSerializer
     # Получаем все данне из БД
     queryset = Course.objects.all()
