@@ -2,7 +2,7 @@ from rest_framework.generics import CreateAPIView, DestroyAPIView, UpdateAPIView
 from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course, Lesson
-from materials.serializer import CourseSerializer, LessonSerializer
+from materials.serializer import CourseSerializer, LessonSerializer, CourseDetailSerializer
 
 
 class CourseViewSet(ModelViewSet):
@@ -10,6 +10,16 @@ class CourseViewSet(ModelViewSet):
     serializer_class = CourseSerializer
     # Получаем все данне из БД
     queryset = Course.objects.all()
+
+    def get_serializer_class(self):
+        """Метод получения сериализатора в зависимости от запроса
+        (вывод всего списка или просмотр одного объекта)"""
+
+        if self.action == "retrieve":
+            return CourseDetailSerializer
+
+        return CourseSerializer
+
 
 
 class LessonCreateAPIView(CreateAPIView):
