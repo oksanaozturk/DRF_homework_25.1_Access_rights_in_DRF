@@ -21,7 +21,6 @@ class CourseViewSet(ModelViewSet):
         return CourseSerializer
 
 
-
 class LessonCreateAPIView(CreateAPIView):
     """Класс для создания экземпляра модели Lesson (CRUD)"""
     serializer_class = LessonSerializer
