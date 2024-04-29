@@ -1,6 +1,6 @@
-# DRF_homework_25.1_Access_rights_in_DRF 
+# DRF_homework_25.1_Access_rights_in_DRF (Права доступа в DRF) 
 
-# Это продолжение DRF_homework_24.2_Serializers (Права доступа в DRF)
+# Это продолжение DRF_homework_24.2_Serializers (Сериализаторы)
 
 # Для разворачивания проекта потребуется создать и заполнить файл .env  по шаблону файла .env.sample
 
