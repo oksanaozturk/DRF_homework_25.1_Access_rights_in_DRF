@@ -21,12 +21,24 @@ class CourseViewSet(ModelViewSet):
 
         return CourseSerializer
 
+    def perform_create(self, serializer):
+        """Метод для присоединения создателя курса к курсу"""
+        course = serializer.save()
+        course.owner = self.request.user
+        course.save()
+
 
 class LessonCreateAPIView(CreateAPIView):
     """Класс для создания экземпляра модели Lesson (CRUD)"""
     serializer_class = LessonSerializer
     # Получаем все данне из БД - не нужен для CREATE
     # queryset = Lesson.objects.all()
+
+    def perform_create(self, serializer):
+        """Метод для присоединения создателя урока к уроку"""
+        lesson = serializer.save()
+        lesson.owner = self.request.user
+        lesson.save()
 
 
 class LessonUpdateAPIView(UpdateAPIView):
