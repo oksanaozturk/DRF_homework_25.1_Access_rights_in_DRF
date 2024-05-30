@@ -1,4 +1,5 @@
 from django.urls import path
+from rest_framework.permissions import AllowAny
 # Используем SimpleRouter так как с ним можно создать несколько экземпляров класса, а с DefaultRouter только один
 from rest_framework.routers import SimpleRouter
 
@@ -26,8 +27,8 @@ urlpatterns = [
     # Путь для удаления объекта модели User
     path("user-destroy/<int:pk>/", UserDestroyAPIView.as_view(), name="users-destroy"),
 
-    path("login/", TokenObtainPairView.as_view(), name='login'),
-    path("token/refresh/", TokenRefreshView.as_view(), name='token_refresh'),
+    path("login/", TokenObtainPairView.as_view(permission_classes=(AllowAny,)), name='login'),
+    path("token/refresh/", TokenRefreshView.as_view(permission_classes=(AllowAny,)), name='token_refresh'),
 
     ] + router.urls
 
