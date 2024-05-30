@@ -29,7 +29,7 @@ class UserCreateAPIView(CreateAPIView):
     """Класс для создания экземпляра модели User (CRUD)"""
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    # Делаем разрешение, чтобы незарегистрированный пользователь имел доступ к регистрации
+    # Делаем разрешение для этого контроллера, чтобы незарегистрированный пользователь имел доступ к регистрации
     permission_classes = (AllowAny,)
 
     def perform_create(self, serializer):
