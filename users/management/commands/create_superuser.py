@@ -12,6 +12,7 @@ class Command(BaseCommand):
             email="admin@sky.pro",
             # Поля, которые разрешат вход в Админку
             is_staff=True,
+            is_active=True,
             is_superuser=True,
         )
         # Функция set_password() нужна для кеширования пароля
