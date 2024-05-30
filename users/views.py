@@ -1,6 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
 from rest_framework.generics import CreateAPIView, UpdateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet
 
 from users.models import Payment, User
@@ -28,6 +29,8 @@ class UserCreateAPIView(CreateAPIView):
     """Класс для создания экземпляра модели User (CRUD)"""
     serializer_class = UserSerializer
     queryset = User.objects.all()
+    # Делаем разрешение, чтобы незарегистрированный пользователь имел доступ к регистрации
+    permission_classes = (AllowAny,)
 
     def perform_create(self, serializer):
         """Данный метод необходим для того, чтобы нам не мешала настройка 'username = None',
