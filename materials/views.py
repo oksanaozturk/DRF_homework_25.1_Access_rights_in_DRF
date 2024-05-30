@@ -1,9 +1,10 @@
 from rest_framework.generics import CreateAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView, ListAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course, Lesson
 from materials.serializer import CourseSerializer, LessonSerializer, CourseDetailSerializer
-from users.permissions import IsModer
+from users.permissions import IsModer, IsOwner
 
 
 class CourseViewSet(ModelViewSet):
@@ -12,6 +13,19 @@ class CourseViewSet(ModelViewSet):
     serializer_class = CourseSerializer
     # Получаем все данне из БД
     queryset = Course.objects.all()
+
+    def get_permissions(self):
+        """Метод для проверки доступа к функцианалу сайта, в зависимости от группы Пользователя """
+        if self.action == 'create':
+            # ~ это знак отрицания, то есть не Модератор
+            # IsAuthenticated можно не указыывать, так как он прописан у нас на уровне проекта
+            self.permission_classes = (IsAuthenticated, ~IsModer)
+        elif self.action in ['list', 'retrieve', 'update']:
+            self.permission_classes = (IsModer | IsOwner,)
+        elif self.action == 'destroy':
+            self.permission_classes = (IsOwner | ~IsModer,)
+
+        return super().get_permissions()
 
     def get_serializer_class(self):
         """Метод получения сериализатора в зависимости от запроса
@@ -28,22 +42,15 @@ class CourseViewSet(ModelViewSet):
         course.owner = self.request.user
         course.save()
 
-    def get_permissions(self):
-        """Метод для проверки доступа к функцианалу сайта, в зависимости от группы Пользователя """
-        if self.action in ['create', 'destroy']:
-            # ~ это знак отрицания, то есть не Модератор
-            self.permission_classes = (~IsModer,)
-        elif self.action in ['list', 'retrieve', 'update']:
-            self.permission_classes = (IsModer,)
-
-        return super().get_permissions()
-
 
 class LessonCreateAPIView(CreateAPIView):
     """Класс для создания экземпляра модели Lesson (CRUD)"""
     serializer_class = LessonSerializer
     # Получаем все данне из БД - не нужен для CREATE
     # queryset = Lesson.objects.all()
+
+    # Необходимо указать IsAuthenticated, так как вносятся изменения на уровне проекта
+    permission_classes = (~IsModer, IsAuthenticated)
 
     def perform_create(self, serializer):
         """Метод для присоединения создателя урока к уроку"""
@@ -57,21 +64,25 @@ class LessonUpdateAPIView(UpdateAPIView):
     serializer_class = LessonSerializer
     # Получаем все данне из БД
     queryset = Lesson.objects.all()
+    permission_classes = (IsAuthenticated, IsModer | IsOwner)
 
 
 class LessonDestroyAPIView(DestroyAPIView):
     """Класс для удаления экземпляра модели Lesson (CRUD)"""
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = (IsAuthenticated, IsOwner | ~IsModer)
 
 
 class LessonListAPIView(ListAPIView):
     """Класс для выведения всех экземпляров модели Lesson (CRUD)"""
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = (IsAuthenticated, IsModer | IsOwner)
 
 
 class LessonRetrieveAPIView(RetrieveAPIView):
     """Класс для выведения одного экземпляра модели Lesson (CRUD)"""
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
+    permission_classes = (IsAuthenticated, IsModer | IsOwner)
