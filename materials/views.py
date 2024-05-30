@@ -3,6 +3,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course, Lesson
 from materials.serializer import CourseSerializer, LessonSerializer, CourseDetailSerializer
+from users.permissions import IsModer
 
 
 class CourseViewSet(ModelViewSet):
@@ -26,6 +27,16 @@ class CourseViewSet(ModelViewSet):
         course = serializer.save()
         course.owner = self.request.user
         course.save()
+
+    def get_permissions(self):
+        """Метод для проверки доступа к функцианалу сайта, в зависимости от группы Пользователя """
+        if self.action in ['create', 'destroy']:
+            # ~ это знак отрицания, то есть не Модератор
+            self.permission_classes = (~IsModer,)
+        elif self.action in ['list', 'retrieve', 'update']:
+            self.permission_classes = (IsModer,)
+
+        return super().get_permissions()
 
 
 class LessonCreateAPIView(CreateAPIView):
