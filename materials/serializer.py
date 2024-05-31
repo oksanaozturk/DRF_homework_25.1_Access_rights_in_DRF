@@ -1,18 +1,18 @@
-from rest_framework.fields import SerializerMethodField
-from rest_framework.serializers import ModelSerializer
-
+from rest_framework import serializers
 from materials.models import Course, Lesson
+from materials.validators import ValidateURLResource
 
 
-class LessonSerializer(ModelSerializer):
+class LessonSerializer(serializers.ModelSerializer):
     """Класс создания сериализатора для модели Lesson"""
 
     class Meta:
         model = Lesson
         fields = "__all__"  # Или кортеж полей, которые необходимо вывести
+        validators = [ValidateURLResource(field='video')]
 
 
-class CourseSerializer(ModelSerializer):
+class CourseSerializer(serializers.ModelSerializer):
     """Класс создания сериализатора для модели Course"""
 
     class Meta:
@@ -20,10 +20,10 @@ class CourseSerializer(ModelSerializer):
         fields = "__all__"   # Или кортеж полей, которые необходимо вывести
 
 
-class CourseDetailSerializer(ModelSerializer):
+class CourseDetailSerializer(serializers.ModelSerializer):
     """Класс создания сериализатора для модели Course"""
     # Задаем новое поле для модели. которое будет передаваться через Serializer
-    count_lessons_for_course = SerializerMethodField()
+    count_lessons_for_course = serializers.SerializerMethodField()
     # Получаем новое поле для модели. которое будет передаваться через Serializer
     # Обращаюсь через lessons, а не lesson_set, так как в модели настроен related_name
     # lessons = LessonSerializer(source='lessons', many=True, read_only=True)
