@@ -8,7 +8,7 @@ from users.permissions import IsModer, IsOwner
 
 
 class CourseViewSet(ModelViewSet):
-    """Класс для настройки CRUD для модели Course с помощью метеда ViewSet
+    """Класс для настройки CRUD для модели Course с помощью метода ViewSet
     Create, Update, Retrieve, Delete."""
     serializer_class = CourseSerializer
     # Получаем все данне из БД
