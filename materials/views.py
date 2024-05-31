@@ -1,8 +1,11 @@
-from rest_framework.generics import CreateAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView, ListAPIView
+from rest_framework.generics import CreateAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView, ListAPIView, \
+    get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
-from materials.models import Course, Lesson
+from materials.models import Course, Lesson, SubscriptionCourse
 from materials.serializer import CourseSerializer, LessonSerializer, CourseDetailSerializer
 from users.permissions import IsModer, IsOwner
 
@@ -86,3 +89,25 @@ class LessonRetrieveAPIView(RetrieveAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = (IsAuthenticated, IsModer | IsOwner)
+
+
+class SubscriptionCourseAPIView(APIView):
+    """Класс для установки/удаления подписки пользователя."""
+    def post(self, *args, **kwargs):
+        """Метод управления подпиской."""
+        user = self.request.user
+        course_id = self.request.data.get('course')
+        course_item = get_object_or_404(Course, pk=course_id)
+
+        subs_item = SubscriptionCourse.objects.filter(user=user, course=course_item)
+
+        # Если подписка у пользователя на этот курс есть - удаляем ее
+        if subs_item.exists():
+            subs_item.delete()
+            message = 'подписка удалена'
+        # Если подписки у пользователя на этот курс нет - создаем ее
+        else:
+            SubscriptionCourse.objects.create(user=user, course=course_item)
+            message = 'подписка добавлена'
+        # Возвращаем ответ в API
+        return Response({"message": message})
