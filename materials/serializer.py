@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from materials.models import Course, Lesson
+from materials.models import Course, Lesson, SubscriptionCourse
 from materials.validators import ValidateURLResource
 
 
@@ -53,3 +53,10 @@ class CourseDetailSerializer(serializers.ModelSerializer):
         """Метод для получения количества уроков, входящих в курс"""
 
         return course.lessons.count()
+
+
+class SubscriptionCourseSerializer(serializers.ModelSerializer):
+    """Класс создания сериализатора для модели Подписки."""
+    class Meta:
+        model = SubscriptionCourse
+        fields = '__all__'
