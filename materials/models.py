@@ -1,6 +1,7 @@
 from django.db import models
 
 from config import settings
+from users.models import User
 
 NULLABLE = {"blank": True, "null": True}
 
@@ -39,7 +40,7 @@ class Lesson(models.Model):
         upload_to="lesson_foto", verbose_name="Изображение", **NULLABLE
     )
     description = models.TextField(verbose_name="Описание", blank=True, null=True)
-    video = models.FileField(upload_to="video_lesson", verbose_name="Видео", **NULLABLE)
+    video = models.URLField(verbose_name="Ссылка на видео", help_text='Введите ссылку на видео', **NULLABLE)
     # Можно вместо settings.AUTH_USER_MODEL писать просто модель User
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True,
                               verbose_name='Автор урока', help_text='Укажите автора урока')
