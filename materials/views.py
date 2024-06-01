@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course, Lesson, SubscriptionCourse
+from materials.paginators import CustomPagination
 from materials.serializer import CourseSerializer, LessonSerializer, CourseDetailSerializer
 from users.permissions import IsModer, IsOwner
 
@@ -16,6 +17,7 @@ class CourseViewSet(ModelViewSet):
     serializer_class = CourseSerializer
     # Получаем все данне из БД
     queryset = Course.objects.all()
+    pagination_class = CustomPagination
 
     def get_permissions(self):
         """Метод для проверки доступа к функцианалу сайта, в зависимости от группы Пользователя """
@@ -82,6 +84,7 @@ class LessonListAPIView(ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = (IsAuthenticated, IsModer | IsOwner)
+    pagination_class = CustomPagination
 
 
 class LessonRetrieveAPIView(RetrieveAPIView):
