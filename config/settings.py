@@ -174,3 +174,14 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
+
+# Настройки для отправки писем на почту сервиса Яндекс
+EMAIL_HOST = "smtp.yandex.ru"
+EMAIL_PORT = 465
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+# Пишем нашу почту, ту почту с которой будет отправляться письмо
+# Получаем пароль для приложения следуя шагам на сайте https://yandex.ru/support/id/authorization/app-passwords.html
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+# Пишем пароль для Приложения Яндекс, а не пароль входа на Почту
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
