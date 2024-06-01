@@ -1,0 +1,19 @@
+Устанавливаем библиотеку  pip install ipython (для красивого отображения Shell)
+
+Переходим в shell: python manage.py shell
+
+* Получаем User: from users.models import User
+
+* Получаем нашего Пользователя: user = User.objects.get(email="skypro.mytest@yandex.ru")
+
+* При новом запросе user - выведет <User: skypro.mytest@yandex.ru>
+
+* С помощью функции dir можем посмотреть все методы и свойства user: dir(user)
+
+*  Смотрим все группы Пользователя: user.groups.all() - выведет  <QuerySet [<Group: moders>]>
+
+* Проверка состоит ли в группе Модераторов: user.groups.filter(name="moders").exists()
+Выведет True (если у него есть эта группа)
+
+user.groups.filter(name="moders123").exists()
+Выведет False (так как нет такой группы)
