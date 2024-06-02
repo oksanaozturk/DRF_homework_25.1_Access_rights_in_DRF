@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
-from materials.models import Course, Lesson
+from materials.models import Course, Lesson, SubscriptionCourse
 from users.models import User
 
 
@@ -270,4 +270,32 @@ class LessonTestCase(APITestCase):
         ),
         self.assertEqual(
             data, result   # Сравниваем эти 2 значения
+        )
+
+
+class SubscriptionCourseTestCase(APITestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(email='test_admin@sky.pro')
+        self.course = Course.objects.create(name='C++', description='Язык программирования общего назначения',
+                                            owner=self.user)
+        self.lesson = Lesson.objects.create(name='Test_Modul', course=self.course, owner=self.user)
+        self.subscription = SubscriptionCourse.objects.create(course=self.course, user=self.user)
+        self.client.force_authenticate(user=self.user)
+
+    def test_is_subscription(self):
+        url = reverse('materials:subscription')
+        data = {
+            "user": self.user.id,
+            "course": self.course.pk,
+        }
+
+        response = self.client.post(url, data)
+        result = response.json()
+        print(result)
+        self.assertEqual(
+            response.status_code, status.HTTP_200_OK
+        )
+        self.assertEqual(
+            result.get('message'),   'подписка удалена'
         )
