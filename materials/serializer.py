@@ -43,10 +43,16 @@ class CourseDetailSerializer(serializers.ModelSerializer):
     #     lessons = [lesson.name for lesson in Lesson.objects.filter(course=course)]
     #
     #     return lessons
+    # course_subscription = serializers.SerializerMethodField()     # Создаем поле подписки на курс
+    is_subscription = serializers.SerializerMethodField()  # поле подписки на курс
 
     class Meta:
         model = Course
         fields = "__all__"
+
+    def get_is_subscription(self, course):
+        """Метод для показа наличия подписки у пользователя."""
+        return SubscriptionCourse.objects.filter(course=course, user=self.context['request'].user).exists()
 
     @staticmethod
     def get_count_lessons_for_course(course):
