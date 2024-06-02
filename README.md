@@ -1,179 +1,64 @@
-# DRF_homework_25.1_Access_rights_in_DRF (Права доступа в DRF) 
+# Продолжение домашних работ по курсу Django REST framework (DRF)
 
-# Это продолжение DRF_homework_24.2_Serializers (Сериализаторы)
+# Представлены работы с DRF_homework_24.2_Serializers (Сериализаторы) по DRF_homework_25.2_Validators_pagination_tests (Валидаторы, пагинация и тесты) 
 
-# Для разворачивания проекта потребуется создать и заполнить файл .env  по шаблону файла .env.sample
+* Документация находится по адресу: https://pypi.org/project/django-apscheduler/
 
-* Задание 1
-Реализуйте CRUD для пользователей, в том числе регистрацию пользователей,
-настройте в проекте использование JWT-авторизации и закройте каждый эндпоинт авторизацией.
+# Используемые технологии:
 
-Эндпоинты для авторизации и регистрации должны остаться доступны для неавторизованных пользователей.
+ - Python
+ - Django
+ - PostgerSQL
 
-* Задание 2
-Заведите группу модераторов и опишите для нее права работы с любыми уроками и курсами, но без возможности их удалять и создавать новые.
-Заложите функционал такой проверки в контроллеры.
+* Параметры по работе в БД с Пользователями:
 
-* Задание 3
-Опишите права доступа для объектов таким образом, чтобы пользователи, которые не входят в группу модераторов, могли видеть,
-редактировать и удалять только свои курсы и уроки.
+ - Email Пользователя
+ - Номер телефона Пользователя
+ - Город проживания Пользователя
+ - Аватар Пользователя
 
-Примечание:
-Заводить группы лучше через админку и не реализовывать для этого дополнительных эндпоинтов.
+Параметры по работе в БД с Курсами:
 
-# Последовательность действий:
+ - Наименование курса
+ - Превью курса
+ - Описание
+ - Автор курса
 
-1) Реализован CRUD для Usre  через добавление классов в views.py UserCreateAPIView, UserUpdateAPIView, 
-UserDestroyAPIView, UserListAPIView, UserRetrieveAPIView
+Параметры по работе в БД с Уроками:
 
-2) Проходим по ссылке https://pypi.org/project/djangorestframework-simplejwt/ , 
-далее переходим на полную документацию https://django-rest-framework-simplejwt.readthedocs.io/en/latest/
+ - Наименование урока
+ - Наименование курса, к которому привязан урок 
+ - Превью урока
+ - Описание
+ - Ссылка на видео урока
+ - Автор урока
 
-Выбираем Getting started:
+Параметры по работе в БД с Подпиской на обновление курса:
 
-* Устанавливаем библиотеку: pip install djangorestframework-simplejwt
+ - Пользователь подписки
+ - Курс в подписке
 
-* Делаем запись о добавлении в requirements.txt
+Параметры по работе в БД с Платежами:
 
-Переходим в раздел Settings: оттуда копируем 2 переменные и вставляем их в settings.py  нашего проекта
+ - Плательщик (Пользователь курса)
+ - Дата оплаты курса/урока
+ - Указание курса/урока, который был оплачен
+ - Сумма оплаты
+ - Способ оплаты
+ - Ссылка на оплату
+ - ID Сессии
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-}
+# Инструкция по развертыванию
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+* Для разворачивания проекта потребуется создать и заполнить файл .env  по шаблону файла .env.sample
 
-3) Добавляем в settings.py  настройки:
-   REST_FRAMEWORK = {
-    ...
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        ...
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
-    ...
-}
-4) Добавляем библиотеку в список Приложений INSTALLED_APPS: rest_framework_simplejwt 
-5) Далее переходим в раздел Settings и копируем первые две строчки e SIMPLE_JWT (это настройки библиотеки), их вставляем в settings.py в нашем проекте
-Это время жизни ACCESS_TOKEN и REFRESH_TOKEN + импортируем timedelta: from datetime import timedelta
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5), - делается таким коротким для безопасности, он предоставляет достут к инпоинтам, которые закрыты на авторизацию
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1), - позвоняет обновлять ACCESS_TOKEN, когда у того заканчивается срок действия
-}
+* Используется виртуальное окружение - venv, зависимости записаны в файл requirements.txt
+  pip install -r requirements.txt
 
-6) Далее снова переходим в раздел Getting started: и оттуда копируем данные для users/urls.py
+* Команда для запуска Приложения: python manage.py runserver
 
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+# Автор проекта
 
-urlpatterns = [
-    ...
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    ...
-]
-'api/token/' меняем на "login/" + оставляем 'token/refresh/'
+https://github.com/oksanaozturk
 
-Добавляем переменную app_name = UsersConfig.name + импортируем из from users.apps import UsersConfig
 
-7) Описываем в users/ views.py  метод perform_create
-
-8) Настраиваем доступы для пользователей: Идем документацию https://www.django-rest-framework.org/
-* Находим в APIGuide - Permissions
-* Копирует оттуда настройку для REST_FRAMEWORK и добавляем её в settings.py 
-(будет доступна работа для всех авторизованных Пользователей)
-    REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
-}
-
-* Делаем разрешение в контроллере views.py/UserCreateAPIView, чтобы незарегистрированный пользователь имел доступ к регистрации
-    permission_classes = (AllowAny,) (импортируем её из from rest_framework.permissions import AllowAny)
-
-* Также, чтобы незарегистрированные пользователи могли получать токены, делаем разрешение ДЛЯ ВСЕХ в users/urls.py
-
-path("login/", TokenObtainPairView.as_view(permission_classes=(AllowAny,)), name='login'),
-path("token/refresh/", TokenRefreshView.as_view(permission_classes=(AllowAny,)), name='token_refresh'),
-
-9) Добавили в модели Lesson and Course owner (владельца) +  делаем миграцмм
-
-* python manage.py makemigrations
-* python manage.py migrate  
-
-10) Добавляем в materials/views.py в классы CourseViewSet и LessonCreateAPIView метод perform_create 
-для привязки владельца и создаваемого объекта (курс или урок)
-
-При проверке работы в https://web.postman.co/workspace/ помним, что для 
-* СОЗДАНИЯ НОВОГО КУРСА: 
-выбираем метод POST + используем урл http://127.0.0.1:8000/materials/course/ (так как здесь создание контроллера через ViewSet)
-
-* ДЛЯ ВЫВОДА ВСЕХ КУРСОВ:
-выбиораем метод GET + http://127.0.0.1:8000/materials/course/
-
-* ДЛЯ ПОЛУЧЕНИЯ КОНКРЕТНОГО КУРСА:
-выбиораем метод GET + http://127.0.0.1:8000/materials/course/1/ (id курса)
-
-11) Далее заходим в Админку, создает там новую группу Модераторы и присваиваем её одному из Пользователей.
-
-12) Далее смотрим документацию https://www.django-rest-framework.org/api-guide/permissions/#permissions о Permissions
-* Копируем и переносим в новый файл users/ permissions.py (создаем новый файл) и редактируем данные которые скопировали
-
-from rest_framework import permissions
-
-class CustomerAccessPermission(permissions.BasePermission):
-    message = 'Adding customers not allowed.'
-
-    def has_permission(self, request, view):
-
-* Далее идем в materials/views.py  и добавляем в Контроллеру модели Course, которая была создана через ViewSet
-метод get_permissions. В котором задаем настройки для разных групп Пользователей относительно их доступа к функционалу
-* 
-======================================================================
-Параллельно  pip install ipython (для красивого отображения Shell)
-
-Переходим в shell: python manage.py shell
-
-* Получаем User: from users.models import User
-
-* Получаем нашего Пользователя: user = User.objects.get(email="skypro.mytest@yandex.ru")
-
-* При новом запросе user - выведет <User: skypro.mytest@yandex.ru>
-
-* С помощью функции dir можем посмотреть все методы и свойства user: dir(user)
-
-*  Смотрим все группы Пользователя: user.groups.all() - выведет  <QuerySet [<Group: moders>]>
-
-* Проверка состоит ли в группе Модераторов: user.groups.filter(name="moders").exists()
-Выведет True (если у него есть эта группа)
-
-user.groups.filter(name="moders123").exists()
-Выведет False (так как нет такой группы)
-
-=======================================================================
-
-13) Далее делаем такую же настройку по Owner (Владельцам создаваемых уроков и курсов)
- * Идем на сайт https://www.django-rest-framework.org/api-guide/permissions/#permissions в раздел permissions
- * Из раздела Example копируем настройку и переносим её в users/ permissions.py для редактирования:
-
-class IsOwnerOrReadOnly(permissions.BasePermission):
-    """
-    Object-level permission to only allow owners of an object to edit it.
-    Assumes the model instance has an `owner` attribute.
-    """
-
-    def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed to any request,
-        # so we'll always allow GET, HEAD or OPTIONS requests.
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
-        # Instance must have an attribute named `owner`.
-        return obj.owner == request.user
-
-* Делее добавляем настройки для Владельца в materials/views.py в метод get_permissions 
-* Далее добавляем настройки permission_classes во все контроллеры, созданныее для модели Lesson
