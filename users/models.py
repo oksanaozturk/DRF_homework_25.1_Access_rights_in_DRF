@@ -65,4 +65,3 @@ class Payment(models.Model):
     amount = models.PositiveIntegerField(verbose_name="Сумма оплаты")
     payment_method = models.CharField(max_length=50, choices=CHOICES_PAYMENT_METHOD, verbose_name="Способ оплаты",
                                       null=True, blank=True)
-

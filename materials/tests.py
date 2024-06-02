@@ -126,9 +126,9 @@ class CourseTestCase(APITestCase):
                         "preview": None,
                         "description": self.course.description,
                         "owner": self.user.pk
-                    }
-                ]
-            }
+                        }
+                        ]
+                }
 
         self.assertEqual(
             response.status_code, status.HTTP_200_OK
@@ -261,9 +261,9 @@ class LessonTestCase(APITestCase):
                         "course": self.course.pk,
                         "owner": self.user.pk
 
-                    }
-                ]
-            }
+                        }
+                        ]
+                }
 
         self.assertEqual(
             response.status_code, status.HTTP_200_OK
@@ -297,5 +297,5 @@ class SubscriptionCourseTestCase(APITestCase):
             response.status_code, status.HTTP_200_OK
         )
         self.assertEqual(
-            result.get('message'),   'подписка удалена'
+            result.get('message'), 'подписка удалена'
         )

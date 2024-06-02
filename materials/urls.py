@@ -27,7 +27,7 @@ urlpatterns = [
     # Путь для отображения модели SubscriptionCourse (Подписки на курс)
     path('subscription/', SubscriptionCourseAPIView.as_view(), name='subscription'),
 
-    ] + router.urls
+] + router.urls
 
 # Другой вариант добавления
 # urlpatterns += router.urls
