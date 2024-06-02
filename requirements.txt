@@ -17,5 +17,7 @@ phonenumberslite==8.13.34
 django-filter==24.2
 
 djangorestframework-simplejwt==5.3.1
+# Проверка покрытия тестами
 coverage==7.5.3
+flake8==7.0.0
 
