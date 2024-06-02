@@ -9,6 +9,7 @@
  - Python
  - Django
  - PostgerSQL
+ - Django REST framework
 
 Параметры по работе в БД с Пользователями:
 
