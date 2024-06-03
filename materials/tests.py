@@ -67,7 +67,8 @@ class CourseTestCase(APITestCase):
 
     def test_course_update(self):
         """
-        Тест для проверки работы update(PUT/PATCH) - внесение изменений в данные курса по указанию pk(id) курса в запросе.
+        Тест для проверки работы update(PUT/PATCH) -
+        внесение изменений в данные курса по указанию pk(id) курса в запросе.
         """
         # Получаем url. Для update указываем course-detail!!! (ТАК КАК это было создано методом ViewSet)
         url = reverse('materials:course-detail', args=(self.course.pk,))
@@ -199,7 +200,8 @@ class LessonTestCase(APITestCase):
 
     def test_lesson_update(self):
         """
-        Тест для проверки работы update(PUT/PATCH) - внесение изменений в данные урока по указанию pk(id) курса в запросе.
+        Тест для проверки работы update(PUT/PATCH) -
+        внесение изменений в данные урока по указанию pk(id) курса в запросе.
         """
         # Получаем url
         url = reverse('materials:lessons-update', args=(self.lesson.pk,))
