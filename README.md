@@ -1,8 +1,12 @@
 # Продолжение домашних работ по курсу Django REST framework (DRF)
 
-# Представлены работы с DRF_homework_24.2_Serializers (Сериализаторы) по DRF_homework_25.2_Validators_pagination_tests (Валидаторы, пагинация и тесты) 
+# Представлены работы: 
+1) DRF_homework_25.1_Access_rights_in_DRF (Права доступа в DRF)  
+2) DRF_homework_25.2_Validators_pagination_tests (Валидаторы, пагинация и тесты)
+3) DRF_homework_26.1_Documentation_and_Security (Документирование и безопасность)
 
 * Документация находится по адресу: https://pypi.org/project/django-apscheduler/
+                                    https://drf-yasg.readthedocs.io/en/stable/ (для настройки документации)
 
 # Используемые технологии:
 
