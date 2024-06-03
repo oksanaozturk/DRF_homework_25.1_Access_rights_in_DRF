@@ -1,4 +1,140 @@
 ЗАДАНИЕ 1
 Подключить и настроить вывод документации для проекта.
 Убедиться, что каждый из реализованных эндпоинтов описан в документации верно, при необходимости описать вручную.
- drf-yasg
+
+!!! Для работы с документацией проекта воспользуйтесь библиотекой drf-yasg или drf-spectacular.
+
+Как вручную можно сформировать документацию в drf-yasg можно почитать https://habr.com/ru/articles/733942/,
+в drf-spectacular — https://habr.com/ru/articles/733942/
+или https://drf-spectacular.readthedocs.io/en/latest/customization.html.
+
+-------------------------------------
+РЕАЛИЗАЦИЯ:
+1) В поисковой строке вводим - drf-yasg
+отпрываем первую ссылку - https://drf-yasg.readthedocs.io/en/stable/
+
+* Далее переходим во вкладку Usage
+
+* Установка библиотеки pip install -U drf-yasg
+
+* В settings.py в INSTALLED_APPS добавляем 'drf_yasg'
+
+* В config/urls.py вставляем импорты и настройки
+
+    from django.urls import re_path
+    from rest_framework import permissions
+    from drf_yasg.views import get_schema_view
+    from drf_yasg import openapi
+
+    schema_view = get_schema_view(
+   openapi.Info(
+      title="Snippets API",
+      default_version='v1',
+      description="Test description",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="contact@snippets.local"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=(permissions.AllowAny,),
+)
+
+   urlpatterns = [
+   path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+   path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+   path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+   ...
+]
+
+* Запускаем Приложение и вводим в поисковой строке: 1-й вариант: http://127.0.0.1:8000/swagger/#/ (путь до swagger)
+
+2-й вариант: http://127.0.0.1:8000/redoc/
+
+Это два варианта документации для созданных энпоинтов.
+
+!!! swagger МОЖНО использовать вместо POSTMAN: для этого нажимаем на "Try it out"
+
+* Чтобы кастомизировать вывод дополнительной информации заходим в раздел Custom schema generation
+
+В инструкции находим декоратор, который можно посадить на контроллер, созданный с помощью метода  ViewSet
+
+@method_decorator(name='list', decorator=swagger_auto_schema(
+    operation_description="description from swagger_auto_schema via method_decorator"
+))
+* В operation_description МОЖНО НАПИСАТЬ НЕОБХОДИМЫЙ НАМ КОМЕНТАРИЙ, который будет выводиться на странице документации
+
+* Если провалиться в swagger_auto_schema в декораторе, то увидим много параметров, которые все по умолчанию == None
+
+Ex: responses - отвечает за тело ответа. Если необходимо его кастомизировать, то нужно создать новый сериалазер
+и указать его здесь (в параметре декоратора @method_decorator в скобочки добавляем значение responses)
+
+Параметр request_body можно использовать для кастомного сериализатора, который ранее нигде не был отображен
+
+* name='list' означает, что описание будет добавлено только в раздел выведение листа с сущностями (значение можно менять)
+
+2) Документация по drf spectacular(вводим в поиске):
+   https://drf-spectacular.readthedocs.io/en/latest/
+
+=================================================================================
+ЗАДАНИЕ 2
+
+Подключить возможность оплаты курсов через https://stripe.com/docs/api.
+
+Доступы можно получить напрямую из документации,
+а также пройти простую регистрацию по адресу https://dashboard.stripe.com/register.
+
+-----------------------------------
+РЕАЛИЗАЦИЯ:
+
+1) Добавляем поля в модель Платежа: session_id и link + делаем миграции
+   python manage.py makemigrations
+   python manage.py migrate
+
+СОЗДАЕМ ФАЙЛ services.py
+
+2) В поисковой строке - stripe api,
+* далее выбираем https://docs.stripe.com/api (это документация stripe)
+* далее нажимаем на Sing in (желательно открыть в соседней вкладке)
+* Проходим регистрацию
+* Заходим в Личный кабинет
+* Нажимаем на Developers
+* Получаем токен
+* Сохраняем токен в settings.py  в переменной STRIPE_API_KEY (её значение сразу прячем в файл .env)
+
+
+3) Для КОНВЕРТАЦИИ ВАЛЮТЫ:
+Работаем в users/services.py
+
+* документация https://pypi.org/project/forex-python/
+* устанавливаем библиотеку pip install forex-python
+* открываем ссылку на документацию https://forex-python.readthedocs.io/en/latest/usage.html
+* импортируем from forex_python.converter import CurrencyRates
+* создаем функцию convert_rub_to_dollars
+
+4) Работаем в users/services.py
+* Создаем функцию для создания продукта create_stripe_product
+* Создаем функцию для создания цены create_stripe_price
+* Создаем функцию для создания сессии оплаты create_stripe_session
+
+* Возможна конвертация цены из рублей в доллары (Леша рассказывает об этом в подобном примере по домашке)
+  Первой будет идти функция конвертации, далее данные будут передаваться в функцию create_stripe_price
+from forex_python.converter import CurrencyRates
+
+def convert_rub_to_dollars(amount):
+    """Функция конвертации валют (рубли в доллары)"""
+
+    # Создаем экземпляр класса CurrencyRates
+    c = CurrencyRates()
+    rate = c.get_rate('RUB', 'USD')
+    return int(amount * rate)
+
+5) В контроллере PaymentViewSet создаем метод perform_create (создание сущности модели Payment)
+
+* ТАК КАК У МЕНЯ контроллер создан с помощью метода ViewSet, я создаю функцию в контроллере PaymentViewSet
+
+* ЕСЛИ БЫ СОЗДАНИЕ КОНТРОЛЛЕРОВ БЫЛО ЧЕРЕЗ КЛАССЫ ДЖЕНЕРИКИ,
+то данный метод мы бы добавили в класс PaymentCreateAPIView
+(который бы отвечам за создание нового объекта модели Платежа)
+
+* Прописываем путь в users/urls.py
+ В нашем примере это: router.register("payments", PaymentViewSet)
