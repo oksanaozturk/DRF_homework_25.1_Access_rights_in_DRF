@@ -6,10 +6,11 @@ from rest_framework.viewsets import ModelViewSet
 
 from users.models import Payment, User
 from users.serializer import PaymentSerializer, UserSerializer
+from users.services import create_stripe_price, create_stripe_session, create_stripe_product
 
 
 class PaymentViewSet(ModelViewSet):
-    """Класс для настройки CRUD для модели Payment с помощью метеда ViewSet
+    """Класс для настройки CRUD для модели Payment с помощью метода ViewSet
     Create, Update, Retrieve, Delete."""
     serializer_class = PaymentSerializer
     # Получаем все данне из БД
@@ -20,9 +21,31 @@ class PaymentViewSet(ModelViewSet):
 
     # Настройка сортировки
     # Переопределяем backends так как для ordering и search нужен filters.OrderingFilter,
-    # который импортируем из rest_framework, а для filterset нужен только DjangoFilterBackend, который из django-filters
+    # который импортируем из rest_framework, а для filterset нужен только DjangoFilterBackend,который из django-filters
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     ordering_fields = ('date_payment',)
+
+    def perform_create(self, serializer):
+        """
+        Функция для создания и настройки оплаты
+        """
+        # Создание платежа
+        payment = serializer.save(user=self.request.user)
+        # Создание продукта
+        product = create_stripe_product(payment)
+        if payment.payment_method == 'transfer to account':
+            # Конвертация валюты
+            # amount_in_dollar = convert_rub_to_dollars(payment.amount)
+            # Создание стоимости (цены платежа)
+            price = create_stripe_price(payment, product)
+            # Получаем session_id
+            session_id, payment_link = create_stripe_session(price)
+            # Записываем в значение session_id нашего платежа значение session_id
+            payment.session_id = session_id
+            # Записываем в значение link нашего платежа значение payment_link
+            payment.link = payment_link
+            # Сохраняем данные
+            payment.save()
 
 
 class UserCreateAPIView(CreateAPIView):
