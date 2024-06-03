@@ -8,3 +8,5 @@ POSTGRES_PASSWORD=
 
 EMAIL_HOST_USER=  # Напишите Вашу почту
 EMAIL_HOST_PASSWORD=  # Напишите пароль для Приложения Яндекс, а не пароль входа на Почту
+
+STRIPE_API_KEY=  # Добавьте секретный ключ из Личного кабинета на Stripe
