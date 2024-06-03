@@ -172,7 +172,7 @@ REST_FRAMEWORK = {
 # Настройки для работы библиотеки :
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
 
@@ -186,3 +186,6 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 # Пишем пароль для Приложения Яндекс, а не пароль входа на Почту
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
+
+# Настройка платежей через Stripe. Добавлен секретный ключ из Личного кабинета на Stripe
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
