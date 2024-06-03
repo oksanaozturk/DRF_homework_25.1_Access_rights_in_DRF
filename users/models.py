@@ -40,7 +40,7 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
 
     class Meta:
-        verbose_name = "Пользоаптель"
+        verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
 
     def __str__(self):
@@ -70,3 +70,14 @@ class Payment(models.Model):
     # ССылка длинная, поэтому символов даем больше
     link = models.URLField(max_length=400, verbose_name="Ссылка на оплату",
                            help_text='Укажите ссылку на оплату', **NULLABLE)
+
+    class Meta:
+        verbose_name = "Платеж"
+        verbose_name_plural = "Платежи"
+
+    def __str__(self):
+        if self.course:
+            subject = f'курс {self.course.name}'
+        else:
+            subject = f'урок {self.lesson.name}'
+        return f"{self.amount} рублей от {self.user} за {subject}"
