@@ -5,8 +5,13 @@
 2) DRF_homework_25.2_Validators_pagination_tests (Валидаторы, пагинация и тесты)
 3) DRF_homework_26.1_Documentation_and_Security (Документирование и безопасность)
 
-* Документация находится по адресу: https://pypi.org/project/django-apscheduler/
-                                    https://drf-yasg.readthedocs.io/en/stable/ (для настройки документации)
+* Документация находится по адресу: 
+'''
+https://pypi.org/project/django-apscheduler/
+'''
+'''                                    
+https://drf-yasg.readthedocs.io/en/stable/ (для настройки документации)
+'''
 
 # Используемые технологии:
 
