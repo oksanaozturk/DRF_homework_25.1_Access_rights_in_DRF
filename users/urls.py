@@ -2,12 +2,13 @@ from django.urls import path
 from rest_framework.permissions import AllowAny
 # Используем SimpleRouter так как с ним можно создать несколько экземпляров класса, а с DefaultRouter только один
 from rest_framework.routers import SimpleRouter
+from rest_framework_simplejwt.views import (TokenObtainPairView,
+                                            TokenRefreshView)
 
 from users.apps import UsersConfig
-from users.views import PaymentViewSet, UserListAPIView, UserRetrieveAPIView, UserCreateAPIView, UserUpdateAPIView, \
-    UserDestroyAPIView
-
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from users.views import (PaymentViewSet, UserCreateAPIView, UserDestroyAPIView,
+                         UserListAPIView, UserRetrieveAPIView,
+                         UserUpdateAPIView)
 
 app_name = UsersConfig.name
 

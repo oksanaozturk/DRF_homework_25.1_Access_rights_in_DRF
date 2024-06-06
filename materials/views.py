@@ -1,5 +1,6 @@
-from rest_framework.generics import CreateAPIView, DestroyAPIView, UpdateAPIView, RetrieveAPIView, ListAPIView, \
-    get_object_or_404
+from rest_framework.generics import (CreateAPIView, DestroyAPIView,
+                                     ListAPIView, RetrieveAPIView,
+                                     UpdateAPIView, get_object_or_404)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,9 +8,10 @@ from rest_framework.viewsets import ModelViewSet
 
 from materials.models import Course, Lesson, SubscriptionCourse
 from materials.paginators import CustomPagination
-from materials.serializer import CourseSerializer, LessonSerializer, CourseDetailSerializer
-from users.permissions import IsModer, IsOwner
+from materials.serializer import (CourseDetailSerializer, CourseSerializer,
+                                  LessonSerializer)
 from materials.tasks import send_message_about_update_course
+from users.permissions import IsModer, IsOwner
 
 
 class CourseViewSet(ModelViewSet):

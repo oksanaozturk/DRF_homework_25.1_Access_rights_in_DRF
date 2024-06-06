@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from materials.models import Lesson, Course, SubscriptionCourse
+from materials.models import Course, Lesson, SubscriptionCourse
 
 
 # Чтобы отобразить все уроки определенного курса в админе, можно использовать InlineModelAdmin
