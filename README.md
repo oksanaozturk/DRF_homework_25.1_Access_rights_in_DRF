@@ -101,5 +101,8 @@ STRIPE_API_KEY=
 ### Команда для запуска celery-bea и celery worker одной командой:
   - celery -A condig worker --beat --scheduler django --loglevel=info
 
-### Автор проекта
+</details>
+
+
+### Автор проекта https://github.com/oksanaozturk
 
