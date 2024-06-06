@@ -1,1 +1,237 @@
 УРОК 26.2. Celery
+
+Celery — распределенная асинхронная очередь заданий, которая обладает широким функционалом.
+
+Брокер — в рамках работы Django-приложения с Celery это посредник для хранения информации о выполняемых задачах.
+Для этих целей часто используют нереляционные БД, например Redis.
+
+Redis — быстрое хранилище данных. Оно является нереляционной базой данных,
+которая использует хранения типа «ключ-значение» и хранит все данные в оперативной памяти.
+
+eventlet — специальный пакет для обработки асинхронных задач для Windows.
+
+Очередь — это форма асинхронной коммуникации между или внутри сервисов,
+применяемая в различных архитектурах веб-приложений.
+
+shared_task — специальный декоратор для создания отложенных задач для Celery.
+
+Celery beat — замена crontab, работает на основе Celery и отвечает за исполнение периодических задач.
+
+ЗАДАНИЕ 1
+Настройте проект для работы с Celery. Также настройте приложение на работу с celery-beat для выполнения периодических задач.
+
+Не забудьте вынести настройки Redis в переменные окружения.
+____________________________________________________________________
+РЕАЛИЗАЦИЯ:
+1) В браузере набираем celery django
+Открываем документацию https://docs.celeryq.dev/en/stable/django/first-steps-with-django.html
+
+2) В директории config создаем файл celery.py
+3) Далее копируем из документации информацию и вставляем её в файл celery.py
+
+   import os
+
+from celery import Celery
+
+# Set the default Django settings module for the 'celery' program.
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'proj.settings')
+
+app = Celery('proj')
+
+# Using a string here means the worker doesn't have to serialize
+# the configuration object to child processes.
+# - namespace='CELERY' means all celery-related configuration keys
+#   should have a `CELERY_` prefix.
+app.config_from_object('django.conf:settings', namespace='CELERY')
+
+# Load task modules from all registered Django apps.
+app.autodiscover_tasks()
+
+
+@app.task(bind=True, ignore_result=True)
+def debug_task(self):
+    print(f'Request: {self.request!r}')
+
+4) Параллельно импортируем модуль celery
+   pip install celery
+* + добавляем в requirements.txt
+
+5) В файле celery.py proj меняем на config
+
+6) В config/ __init__ добавляем:
+
+from .celery import app as celery_app
+
+__all__ = ('celery_app',)
+
+7) В settings.py  добавляем настройки: ТАЙМЗОНА проекта и ТАЙМЗОНА  celery должна быть одна
+   # Celery Configuration Options
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+
+8) Создание файла tasks.py (где буем писать наши задачи)
+
+9) Устанавливаем redis + запускаем его:
+ДЛЯ ЗАПУСКА redis (после его установки и настройки):
+
+* Открываем окно Ubuntu для Windows
+* В открытом окне пишем команды
+  - sudo service redis-server star
+  ДАЛЕЕ система запросит пароль Пользователя (он создавался при установке) 133124 у меня
+  - sudo service redis-server star (ещё раз повторить)
+  - redis-cli
+  - ping
+  PONG (Это будет ответ системы на наш ping)
+
+ДАЛЕЕ прописываем настройки для Redis, берем их с https://www.geeksforgeeks.org/celery-integration-with-django/
+PYTHON
+# set the celery broker url
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+
+# set the celery result backend
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+* Эти значения скрываем, записав в файл .env
+
+10) Запускается  celery мз Pycharm командой: celery -A proj worker -l info (proj мы заменяем на config)
+
+У Леши в уроке INFO было написано с большой буквы
+
+ =====================================================================================
+ЗАДАНИЕ 2
+Ранее вы реализовали функционал подписки на обновление курсов.
+Теперь добавьте асинхронную рассылку писем пользователям об обновлении материалов курса.
+
+ПОДСКАЗКА
+Чтобы реализовать асинхронную рассылку, вызывайте специальную задачу по отправке письма в коде контроллера.
+То есть вызов задачи на отправку сообщения должен происходить в контроллере обновления курса: когда курс обновлен — тем,
+кто подписан на обновления именно этого курса, отправляется письмо на почту.
+
+_______________________________________
+РЕАЛИЗАЦИЯ:
+
+11) Производим настройки Почтового сервиса для отправки писем
+* Документация по адресу: https://vivazzi.pro/ru/it/send-email-in-django/
+
+* Вставляем в проект настройки для Яндекса:
+
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "your@yandex.ru"
+EMAIL_HOST_PASSWORD = "password"
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+
+* Для всех почтовых служб обязательно добавляем:
+SERVER_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+* Из этой же документации можем взять функцию отправки письма:
+from django.conf import settings
+from django.core.mail import send_mail
+
+send_mail('Тема', 'Тело письма', settings.EMAIL_HOST_USER, ['to@example.com'])
+
+12) Создаем файл materials/tasks.py и в нем пишем функцию send_message_about_update_course
+с декоратором @shared_task
+Данная функция формирует email_list Подписчиков на обновление курса и отправляет им письма
+
+13) Далее идем в контроллеры (materials/views.py),
+В Контроллере курса Course, который отвечает за обновление (update), если котроллер был создан с помощью дженериков.
+Если же контроллер был создан с помощью ViewSet, то добавляем метод perform_update в контроллер.
+
+* Добавлен метод perform_update в контроллер CourseViewSet (так как создание было через ViewSet)
+для запуска отправки письма при Update курса
+
+==========================================================================
+ЗАДАНИЕ З
+
+С помощью celery-beat реализуйте фоновую задачу,
+которая будет проверять пользователей по дате последнего входа по полю last_login
+ и, если пользователь не заходил более месяца, блокировать его с помощью флага is_active.
+
+ Задачу сделайте периодической и запланируйте расписание в настройках celery-beat.
+
+Обратите внимание на timezone вашего приложения и timezone в настройках celery: важно, чтобы они были одинаковыми,
+чтобы задачи запускались в корректное время.
+
+--------------------------------------------------------------------------
+
+РЕАЛИЗАЦИЯ:
+
+Ссылка на документацию по celery-beat для настройки задач по расписанию
+https://pypi.org/project/django-celery-beat/
+
+* Установка: pip install django_celery_beat (ОБЯЗАТЕЛЬНО НИЖНИЕ ПОДЧЕРКИВАНИЯ)
+
+* Добавляем django-celery-beat в requirements.txt
+
+*Добавляем django-celery-beat в INSTALLED_APPS/Settings.py
+
+* Добавляем настройки для SCHEDULE в Settings.py
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+* Далее выполняем миграции: python manage.py migrate
+
+* После этого в Админке появятся задачи PERIODIC TASKS.
+ И задачмли можно будет управлять через Админку
+
+ СПОСОБЫ СОЗДАНИЯ ЗАДАЧИ:
+ 1) Через Админку: Выбираем Periodic tasks, далее +Add
+ * Даем ей имя
+ * В Task (registered): выбираем выполнение какой функции мы хотим
+ * В Interval Schedule: задаем период
+
+ 2) В config/Settings.py
+
+    CELERY_BEAT_SCHEDULE = {
+    'blocking_a_user': {
+        'task': 'users.tasks.block_user',  # Путь к задаче
+        'schedule': timedelta(days=1),  # Расписание выполнения задачи (например, каждый день)
+    },
+}
+
+КОМАНДА ДЛЯ ЗАПУСКА celery-bea и celery worker одной командой:
+celery -A [project-name] worker --beat --scheduler django --loglevel=info
+
+То есть в нашем случае это будет
+celery -A config worker --beat --scheduler django --loglevel=info
+
+* ПРОВЕРЯЕМ  реализацию задачи:
+  ** для проверки нужно подкорректировать сроки проверки в config/settings.py/CELERY_BEAT_SCHEDULE
+Вместо days=1 поставить minutes=1
+  ** Далее снова делаем запуск: celery -A config worker --beat --scheduler django --loglevel=info
+
+==========================================================================================
+
+СООТВЕТСТВИЕ PEP8:
+flake8 - инструмент, позволяющий просканировать код проекта и обнаружить в нем стилистические ошибки
+и нарушения различных конвенций кода на Python.
+Установка: pip install flake8
+Запуск: В корне проекта создаем файл .flake8
+        В него заносим настройки:
+        [flake8]
+        max-line-length = 119
+        exclude = .git, __pycache__, venv, .venv, migrations
+
+        Далее в консоли набираем flake8
+
+
+Isort — это библиотека Python для сортировки импорта по алфавиту с автоматическим разделением на разделы и по типу.
+Установка: pip install isort
+Запуск: isort .
+
+Black — это Python-пакет, который автоматически форматирует код, приводя его внешний вид к стандарту. PEP 8.
+Установка: pip install black
+Запуск: black .
+
+=================================================================================
+
+РЕАЛИЗАЦИЯ ОТПРАВКИ РАССЫЛОК ЧЕРЕЗ ТЕЛЕГРАММ БОТА:
+
+* Документацию находим по поисковику - api tg request
+
+https://tg-api.readthedocs.io/en/latest/tg_methods.html
+
+* Создаем у User
