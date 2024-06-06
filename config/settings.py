@@ -9,9 +9,10 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
+import os
 from datetime import timedelta
 from pathlib import Path
-import os
+
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
     "django_filters",
     "users",
     "materials",
+    "django_celery_beat",
 ]
 
 MIDDLEWARE = [
@@ -206,3 +208,13 @@ CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
 # set the celery result backend
 CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND")
 
+# Добавляем настройки для работы django-celery-beat
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+# Программирование задачи на выполнение
+CELERY_BEAT_SCHEDULE = {
+    'blocking_a_user': {
+        'task': 'users.tasks.block_user',  # Путь к задаче
+        'schedule': timedelta(days=1),  # Расписание выполнения задачи (например, каждый день)
+    },
+}
