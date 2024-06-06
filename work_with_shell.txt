@@ -17,3 +17,5 @@
 
 user.groups.filter(name="moders123").exists()
 Выведет False (так как нет такой группы)
+
+ВЫХОД ИЗ Shell Ctrl + D или exit()
