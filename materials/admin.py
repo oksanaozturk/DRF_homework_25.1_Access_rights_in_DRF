@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from materials.models import Lesson, Course
+from materials.models import Lesson, Course, SubscriptionCourse
 
 
 # Чтобы отобразить все уроки определенного курса в админе, можно использовать InlineModelAdmin
@@ -18,7 +18,7 @@ class LessonInline(admin.TabularInline):
 class LessonAdmin(admin.ModelAdmin):
     """Класс для регистрации модели Урок в админке."""
 
-    list_display = ("id", "name", "course", "preview", "description", "video")
+    list_display = ("id", "name", "course", "preview", "description", "video", "owner")
     list_filter = ("name",)
     search_fields = ("name",)
 
@@ -29,6 +29,13 @@ class CourseAdmin(admin.ModelAdmin):
 
     inlines = [LessonInline]
 
-    list_display = ("id", "name", "preview", "description")
+    list_display = ("id", "name", "preview", "description", "owner")
     list_filter = ("name",)
     search_fields = ("name",)
+
+
+@admin.register(SubscriptionCourse)
+class SubscriptionCourse(admin.ModelAdmin):
+    """Класс для модели Полписки в админке."""
+
+    list_display = ("id", "user", "course")
