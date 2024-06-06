@@ -9,6 +9,7 @@ from materials.models import Course, Lesson, SubscriptionCourse
 from materials.paginators import CustomPagination
 from materials.serializer import CourseSerializer, LessonSerializer, CourseDetailSerializer
 from users.permissions import IsModer, IsOwner
+from materials.tasks import send_message_about_update_course
 
 
 class CourseViewSet(ModelViewSet):
@@ -46,6 +47,14 @@ class CourseViewSet(ModelViewSet):
         course = serializer.save()
         course.owner = self.request.user
         course.save()
+
+    def perform_update(self, serializer):
+        """
+        Метод для запуска функции отправки сообщения(письма на почту), при обновлении курса.
+        """
+        update_course = serializer.save()
+        send_message_about_update_course.delay(update_course.id)
+        update_course.save()
 
 
 class LessonCreateAPIView(CreateAPIView):
