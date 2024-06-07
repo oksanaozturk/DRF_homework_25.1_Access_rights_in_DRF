@@ -231,7 +231,102 @@ Black — это Python-пакет, который автоматически ф
 РЕАЛИЗАЦИЯ ОТПРАВКИ РАССЫЛОК ЧЕРЕЗ ТЕЛЕГРАММ БОТА:
 
 * Документацию находим по поисковику - api tg request
+* Документация от Алеши https://dshubenok.github.io/week4/telegram-api/ (Как создать бота)
 
 https://tg-api.readthedocs.io/en/latest/tg_methods.html
 
-* Создаем у User
+1) Создаем у модели User поле tg_chat_id
+tg_chat_id = models.CharField(max_length=50, verbose_name="Телеграмм chat-id",
+                                  help_text='Телеграмм chat-id', **NULLABLE)
+
+* Выполняем миграции
+  python manage.py migrations
+  python manage.py migrate
+
+2) Находим в Телеграмме Бота Get ID (Внутри него будет написано Get My ID)
+* Далее нажимаем start  и получаем наши данные:
+Your user ID: 1142457086
+Current chat ID: 1142457086
+
+* Через панель администратора добавляем его пользователю (в Админке) - Current chat ID: 1142457086
+Желательно, чтобы этот код указывался Пользователем сразу при регистрации
+
+3) Находим в Телеграмме Бота BotFather
+Нажимаем на старт, далее следуя инструкциям создаем нового Бота и получаем:
+
+Done! Congratulations on your new bot. You will find it at t.me/OksushBot.
+You can now add a description, about section and profile picture for your bot, see /help for a list of commands.
+By the way, when you've finished creating your cool bot, ping our Bot Support if you want a better username for it.
+Just make sure the bot is fully operational before you do this.
+
+Use this token to access the HTTP API:
+7294236708:AAFZzkVRM6K0xdRID4f9b_fOyoZ66pSCodA
+Keep your token secure and store it safely, it can be used by anyone to control your bot.
+
+For a description of the Bot API, see this page: https://core.telegram.org/bots/api
+
+Получаеи информацию о TELEGRAM_TOKEN = 7294236708:AAFZzkVRM6K0xdRID4f9b_fOyoZ66pSCodA
+В settings.py  заносим эту переменную  TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN"), а само значение прячем в файл .env
+
+* Импортируем url  в settings.py
+TELEGRAM_URL = "https://api.telegram.org/bot"
+
+4) Создаем сервисную функцию на отправку
+В materials/ services.py создаем функцию get_telegram_message
+------------------------------
+
+import request
+from config import settings
+from materials.services import get_telegram_message
+
+
+def get_telegram_message(chat_id, message):
+    """
+    Функция отправки уведомления в Телеграмм.
+    """
+    # Наши параметры
+    params = {
+        'text': message,
+        'chat_id': chat_id,
+    }
+    # Наш запрос
+    response = requests.get('f{settings.TELEGRAM_URL}{settings.TELEGRAM_TOKEN}/sendMessage', params=params)
+
+------------------------------------------------------------
+
+5) Импортируем функцию get_telegram_message в materials/ tasks.py
+
+И вносим небольшие изменения в функцию send_message_about_update_course
+
+--------------------------------------------------------------
+@shared_task
+def send_message_about_update_course(course_id):
+    """
+    Функция отправки письма на почту Подписчику об обновлениях по курсу.
+    Подключена отправка дополнительно в Телеграмм, если у пользователя есть Токен Телеграмма.
+    """
+    print("Отправка письма ...")
+    course = Course.objects.get(pk=course_id)
+    course_users = SubscriptionCourse.objects.filter(course=course_id)
+    # При условии, что course_users у нас не пустой будет формироваться email_list
+    email_list = []
+    for user in course_users:
+        email_list.append(user.email)
+    # При условии, что email_list у нас не пустой будет производится отправка писем
+    message=f'Вы подписаны на обновления курса, вышла новая информция. Рекомендуем Вас ознакомиться с ней"'
+    send_mail(
+        subject=f'Обновление по курсу {course.name}',
+        message= message,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=email_list,
+        fail_silently=True
+        )
+    user = User.objects.get(email=email)
+    # Если у Пользователя есть необходимые токены телеграмма, то отправляется в Телеграмме
+    if user.tg_chat_id:
+        get_telegram_message(user.tg_chat_id, message)
+
+---------------------------------------------------------------------------------
+
+6) Перед проверкой через Postman необходимо запустить celery из командрой строки:
+celery -A proj worker -l info (proj мы заменяем на config)
