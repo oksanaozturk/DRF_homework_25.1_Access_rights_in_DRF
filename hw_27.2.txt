@@ -1,0 +1,130 @@
+ТЕМА 27.2 Docker Compose
+
+Docker Compose — средство для определения и запуска приложений Docker с несколькими контейнерами.
+
+Запуск приложения — процесс запуска набора сервисов из файла docker-compose.
+
+Build — процесс сборки образа из файла для докера.
+
+Находим документацию по поиску: posgrest docker compose
+medium.com›@agusmahari/docker-how-to-install-… (сейчас не доступен)
+
+Полезные команды для работы с контейнерами:
+
+# Сборка образов
+docker-compose build
+
+# Запуск контейнеров
+docker-compose up
+
+# Запуск контейнеров в фоне
+docker-compose up -d
+
+# Сборка образа и запуск в фоне после успешной сборки
+docker-compose up -d —build
+
+# Выполнение команды <command> внутри контейнера <app>
+docker-compose exec <app> <command>
+
+ЗАДАЧИ 1
+Опишите Dockerfile для запуска контейнера с проектом.
+РЕАЛИЗАЦИЯ:
+Решение расписано в файле 27.1_Docker_Basics.txt
+
+ЗАДАЧИ 2
+ Оберните в Docker Compose Django-проект с БД PostgreSQL.
+ РЕАЛИЗАЦИЯ:
+
+ 1) Создаем в корне проета файл docker-compose.yaml
+
+ 2) Наполняем файн настройками для КОНТЕЙНЕРОВ postgres и app
+
+ 3) В файле .env меняет значение POSTGRES_HOST=db (с postgrs_container на db)
+
+ 4) Запускаем через консоль командой: docker-compose up -d --build
+
+=============================================================================
+ ЗАДАЧИ 3
+ Допишите в docker-compose.yaml работу с Redis.
+ РЕАЛИЗАЦИЯ:
+ 1) Дописываем в файл docker-compose настройки по сервису Redis
+   # Название сервиса.
+  redis:
+    # Образ, на основании которого будет запускаться контейнер
+    image: redis:latest
+    # Настройка, которая перезагружает работу redis при его падения
+    restart: on-failure
+    expose:
+      - "6379"
+
+=============================================================================
+ ЗАДАЧИ 4
+ Допишите в docker-compose.yaml работу с Celery.
+ РЕАЛИЗАЦИЯ:
+1) Дописываем в файл docker-compose настройки по сервису celery и celery-beat
+     # Название сервиса.
+  celery:
+    build: .
+    tty: true
+    command: celery -A config worker -l INFO
+    restart: on-failure
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - db
+      - app
+    env_file:
+      - .env
+
+  celery-beat:
+    build: .
+    tty: true
+    command: celery -A config beat -l INFO
+    restart: on-failure
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - db
+      - app
+    env_file:
+      - .env
+
+2) В файле .env меняет значение CELERY_BROKER_URL и CELERY_RESULT_BACKEND (с postgrs_container на db)
+с CELERY_BROKER_URL=redis://localhost:6379/0 на CELERY_BROKER_URL=redis://redis:6379
+с CELERY_RESULT_BACKEND=redis://localhost:6379/0 на CELERY_RESULT_BACKEND=redis://redis:6379
+
+3) Запускаем через консоль командой: docker-compose up -d --build
+
+4) Проверяем в консоли Командной строки
+docker ps - Видим все запущенные контейнеры
+
+docker ps -a  - - Видим все запущенные и незапущенные контейнеры
+
+5) ДЛЯ ЗАВЕРШЕНИЯ РАБОТЫ: вводим в консоли Pycharm
+
+* docker-compose stop - для остановки всех контейнеров
+
+ОТВЕТ:
+   [+] Stopping 5/5
+ ✔ Container drf_homework_251_access_rights_in_drf-celery-beat-1  Stopped                                                                                                        0.6s
+ ✔ Container drf_homework_251_access_rights_in_drf-celery-1       Stopped                                                                                                        2.2s
+ ✔ Container drf_homework_251_access_rights_in_drf-redis-1        Stopped                                                                                                        0.4s
+ ✔ Container drf_homework_251_access_rights_in_drf-app-1          Stopped                                                                                                       10.4s
+ ✔ Container drf_homework_251_access_rights_in_drf-db-1           Stopped
+
+* docker-compose down - для удаления всех контейнеров
+
+ОТВЕТ:
+[+] Running 6/6
+ ✔ Container drf_homework_251_access_rights_in_drf-celery-beat-1  Removed                                                                                                        0.0s
+ ✔ Container drf_homework_251_access_rights_in_drf-celery-1       Removed                                                                                                        0.0s
+ ✔ Container drf_homework_251_access_rights_in_drf-app-1          Removed                                                                                                        0.0s
+ ✔ Container drf_homework_251_access_rights_in_drf-redis-1        Removed                                                                                                        0.0s
+ ✔ Container drf_homework_251_access_rights_in_drf-db-1           Removed                                                                                                        0.0s
+ ✔ Network drf_homework_251_access_rights_in_drf_default          Removed
+
+!!! ДЛЯ ОЧИСТКИ ОТ ВСЕХ НЕИСПОЛЬЗУЕМЫХ ОБРАЗОВ И КОНТЕЙНЕРОВ:
+
+docker system prune -a
