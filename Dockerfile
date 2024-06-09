@@ -17,4 +17,5 @@ COPY . .
 
 # Команда для запуска приложения при старте контейнера для постановки знака комбинация клавиш (Alt+38)
 # sh - настройка работы с оболочками
-CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+#CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+# !!! КОМАНДА была перенесена в файл docker-compose.yaml, поэтому отсюда её удаляем
