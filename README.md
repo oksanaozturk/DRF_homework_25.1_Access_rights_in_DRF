@@ -1,10 +1,11 @@
-## Продолжение домашних работ по курсу Django REST framework (DRF)
+## Продолжение домашних работ по курсу Django REST framework (DRF) + ДЗ по Docker
 
 ### Представлены работы: 
 1) DRF_homework_25.1_Access_rights_in_DRF (Права доступа в DRF)  
 2) DRF_homework_25.2_Validators_pagination_tests (Валидаторы, пагинация и тесты)
 3) DRF_homework_26.1_Documentation_and_Security (Документирование и безопасность)
 4) DRF_homework_26.2_Celery (Celery)
+5) Homework_27.2_Docker (Docker/ Докер)
 
 ### Документация находится по адресу: 
     ```
@@ -101,6 +102,27 @@ STRIPE_API_KEY=
 ### Команда для запуска celery-bea и celery worker одной командой:
   - celery -A condig worker --beat --scheduler django --loglevel=info
 
+</details>
+
+<details>
+<summary> Инструкция по запуску Docker</summary>
+
+1) Установите DockerDesktop на Ваше устройство
+
+2) После развертывания проекта, необходимо создать файл .env, в котором указать данные для переменных окружения. 
+Переменные находятся в файле .env_example
+
+3) Используется виртуальное окружение - venv, зависимости записаны в файл requirements.txt
+
+4) Соберите образ и запустите проект при помощи команды:
+```
+docker-compose up --build
+```
+
+5) Перейти в приложение Docker Desktop, где запустился наш проект и далее по ссылке подключения
+```
+http://0.0.0.0:8000/
+```
 </details>
 
 
