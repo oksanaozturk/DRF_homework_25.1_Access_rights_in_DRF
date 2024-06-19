@@ -84,6 +84,23 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
   - ping
   PONG (Это будет ответ системы на наш ping)
 
+ЕСЛИ вы используете UBUNTU, вы можете попробовать перезапустить redis- сервер через init.d:
+
+/etc/init.d/redis-server restart
+или остановить / запустить его:
+
+/etc/init.d/redis-server stop
+/etc/init.d/redis-server start
+
+  !!!  У меня так НЕ ЗАПУСКАЛОСЬ, КАК ИСПРАВИЛА!!!
+
+*  Открыла новый терминал WLS  и ввела команду redis-server
+* Далее открылае второй терминал WLS (Ubuntu на Windows) и ввела команду redis-cli
+* Далее ввела ping и получила PONG (Это будет ответ системы на наш ping)
+
+* Если потом redis зависает и не хочеть выключаться, то нужно просто всё перезагрузить (комп в том числе)
+
+
 ДАЛЕЕ прописываем настройки для Redis, берем их с https://www.geeksforgeeks.org/celery-integration-with-django/
 PYTHON
 # set the celery broker url
