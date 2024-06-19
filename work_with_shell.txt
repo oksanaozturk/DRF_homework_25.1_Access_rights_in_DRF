@@ -18,4 +18,6 @@
 user.groups.filter(name="moders123").exists()
 Выведет False (так как нет такой группы)
 
+* Вывести все рассылки Пользователя: newsletters = User.objects.newsletters.all()
+
 ВЫХОД ИЗ Shell Ctrl + D или exit()
