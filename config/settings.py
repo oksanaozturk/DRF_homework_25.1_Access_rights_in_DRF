@@ -171,7 +171,7 @@ REST_FRAMEWORK = {
     ]
 }
 
-# Настройки для работы библиотеки :
+# Настройки для работы библиотеки rest_framework_simplejwt:
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
