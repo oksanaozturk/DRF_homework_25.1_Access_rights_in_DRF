@@ -211,7 +211,7 @@ class LessonTestCase(APITestCase):
         }
         # После находжения url делаем запрос (PATCH), ответ которого запишем в переменную response,
         # чтобы потом его можно было сравнить
-        response = self.client.patch(url)
+        response = self.client.patch(url, data)
         # Далее проводим сравнение двух значений с использованием метода GET (data.get)
         self.assertEqual(
             response.status_code, status.HTTP_200_OK
