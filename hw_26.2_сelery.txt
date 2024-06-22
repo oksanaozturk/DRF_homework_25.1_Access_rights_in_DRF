@@ -221,7 +221,7 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
     },
 }
 
-КОМАНДА ДЛЯ ЗАПУСКА celery-bea и celery worker одной командой:
+КОМАНДА ДЛЯ ЗАПУСКА celery-beat и celery worker одной командой:
 celery -A [project-name] worker --beat --scheduler django --loglevel=info
 
 То есть в нашем случае это будет
@@ -231,6 +231,31 @@ celery -A config worker --beat --scheduler django --loglevel=info
   ** для проверки нужно подкорректировать сроки проверки в config/settings.py/CELERY_BEAT_SCHEDULE
 Вместо days=1 поставить minutes=1
   ** Далее снова делаем запуск: celery -A config worker --beat --scheduler django --loglevel=info
+
+!!! ЕЩЁ ОДИН ВАРИАНТ ЗАПУСКА !!!
+
+Запуск Celery worker и планировщика Celery beat.
+Чтобы использовать периодические задачи, нужно запустить не только Celery worker, но и планировщик Celery beat. Выполните следующую команду в командной строке:
+
+celery -A my_project worker —loglevel=info
+celery -A my_project beat —loglevel=info / celery -A config beat -l INFO (Во 2-м терминале вот эту команду запустила)
+
+!!! ПОМОЩЬ ОТ НАСТАВНИКА!!! Проверять, что redis запущен, при необходимости перезагружать ноут.
+redis запускала в терминале UBUNTU  через команду redis-server
+
+Привет, Оксана!
+
+Давай попробуем запустить beat так:
+
+- celery -A config beat -l INFO -S django
+
+А воркер так:
+
+- celery -A config worker -l INFO -P eventlet
+
+Предварительно необходимо установить eventlet в окружение:
+
+pip install eventlet
 
 ==========================================================================================
 
