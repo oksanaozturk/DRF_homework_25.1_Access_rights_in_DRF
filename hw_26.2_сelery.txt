@@ -285,9 +285,10 @@ Black — это Python-пакет, который автоматически ф
 РЕАЛИЗАЦИЯ ОТПРАВКИ РАССЫЛОК ЧЕРЕЗ ТЕЛЕГРАММ БОТА:
 
 * Документацию находим по поисковику - api tg request
-* Документация от Алеши https://dshubenok.github.io/week4/telegram-api/ (Как создать бота)
+* Документация от Алеши из ДЗ_26.2: https://dshubenok.github.io/week4/telegram-api/ (Как создать бота)
+* ДОКУМЕНТАЦИЯ ОТ НАСТАВЕНИКА В ОБСУЖДЕНИЯХ курсовой 7: https://perfluence.net/blog/article/kak-uznat-id-telegram
 
-https://tg-api.readthedocs.io/en/latest/tg_methods.html
+ДОКУМЕНТАЦИЯ ИЗ ИНТЕРНЕТА: https://tg-api.readthedocs.io/en/latest/tg_methods.html
 
 1) Создаем у модели User поле tg_chat_id
 tg_chat_id = models.CharField(max_length=50, verbose_name="Телеграмм chat-id",
