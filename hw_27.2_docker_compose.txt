@@ -35,6 +35,9 @@ docker-compose exec <app> <command>
  Оберните в Docker Compose Django-проект с БД PostgreSQL.
  РЕАЛИЗАЦИЯ:
 
+ПРИМЕР И ОБЪЯСНЕНИЕ: https://habr.com/ru/articles/578744/
+
+
  1) Создаем в корне проета файл docker-compose.yaml
 
  2) Наполняем файн настройками для КОНТЕЙНЕРОВ postgres и app
